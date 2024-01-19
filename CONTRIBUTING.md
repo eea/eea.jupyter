@@ -11,13 +11,13 @@ top of things.
 
 ## Getting Started
 
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* If you need to submit a ticket do it under EEA Organisation area (https://github.com/eea)
-  under the respective package, e.g. https://github.com/eea/eea.api.dataconnector/issues
-* Submit a ticket for your issue, assuming one does not already exist.
-  * Clearly describe the issue including steps to reproduce when it is a bug.
-  * If case state the browser and operating system used.
-* We also keep a discussion lists for most of the public packages under Google Groups.
+- Make sure you have a [GitHub account](https://github.com/signup/free)
+- If you need to submit a ticket do it under EEA Organisation area (https://github.com/eea)
+  under the respective package, e.g. https://github.com/eea/eea.jupyter/issues
+- Submit a ticket for your issue, assuming one does not already exist.
+  - Clearly describe the issue including steps to reproduce when it is a bug.
+  - If case state the browser and operating system used.
+- We also keep a discussion lists for most of the public packages under Google Groups.
 
 Please note that adding a bug report or feature request in the EEA github does not
 automatically mean that EEA will work on them, since there are budget implications.
@@ -31,19 +31,19 @@ official issue register.
 
 ## Making Changes
 
-* Fork the repository from EEA or directly commit within Collective fork
-* Make sure you added an entry under HISTORY.txt describing your changes
-* Make sure you have added the necessary tests for your changes (do not forget major browsers).
-* Make sure you have updated and added documentation when necessary.
-* Run _all_ the tests to assure nothing else was accidentally broken.
+- Fork the repository from EEA or directly commit within Collective fork
+- Make sure you added an entry under HISTORY.txt describing your changes
+- Make sure you have added the necessary tests for your changes (do not forget major browsers).
+- Make sure you have updated and added documentation when necessary.
+- Run _all_ the tests to assure nothing else was accidentally broken.
 
 ## Submitting Changes
 
-* Push your changes in your fork of the repository.
-* Submit a pull request to the upstream repository (EEA).
+- Push your changes in your fork of the repository.
+- Submit a pull request to the upstream repository (EEA).
 
 # Additional Resources
 
-* [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [EEA packages](https://eea.github.io/docs/IT-systems/)
+- [General GitHub documentation](http://help.github.com/)
+- [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
+- [EEA packages](https://eea.github.io/docs/IT-systems/)
