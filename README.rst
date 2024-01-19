@@ -19,14 +19,19 @@ Upgrade
 Usage
 =============
 1. Import PlotlyController in your notebook
+
 ```python
 from eea.jupyter.controllers.plotly import PlotlyController
 ```
+
 2. Create a PlotlyController instance
+
 ```python
 plotlyCtrl = PlotlyController(url)
 ```
+
 3. Upload a plotly figure
+
 ```python
 plotlyCtrl.uploadPlotly(chart_data, metadata)
 ```
