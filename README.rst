@@ -20,21 +20,18 @@ Usage
 =============
 1. Import PlotlyController in your notebook
 
-```python
-from eea.jupyter.controllers.plotly import PlotlyController
-```
+.. code-block:: python
+  from eea.jupyter.controllers.plotly import PlotlyController
 
 2. Create a PlotlyController instance
 
-```python
-plotlyCtrl = PlotlyController(url)
-```
+.. code-block:: python
+  plotlyCtrl = PlotlyController(url)
 
 3. Upload a plotly figure
 
-```python
-plotlyCtrl.uploadPlotly(chart_data, metadata)
-```
+.. code-block:: python
+  plotlyCtrl.uploadPlotly(chart_data, metadata)
 
 Note: step 3 should be run as the last part of notebook cell, otherwise the plotly editor will not be displayed in the notebook.
 
