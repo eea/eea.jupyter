@@ -38,20 +38,7 @@ class PlotlyController:
         return IPython.display.HTML(html)
 
     def __getOnLoadHandlerJS(self, chart_data, metadata={}):
-        return """
-    function onLoadHandler() {
-      if (window.jupyter_ch) return;
-      function emitPostMessage(event) {
-        if (event.data.type !== 'jupyter-ch:getContent') return;
-        el = document.getElementById('jupyter-ch')
-        if (el) {
-          el.contentWindow.postMessage(%s, '*')
-        }
-      }
-      window.addEventListener('message', emitPostMessage)
-      window.jupyter_ch = true
-    }
-    """ % ({
+        return open('./scripts/plotly.js', 'r').read() % ({
             "type": 'jupyter-ch:setContent',
             "content": {
                 **metadata,
