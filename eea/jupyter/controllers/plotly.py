@@ -33,8 +33,8 @@ class PlotlyController:
         else:
             url += self.path + '/add'
 
-        html = '<iframe id="jupyter-ch" src="{}" width="100%" height="1080" onload="({})()" />'.format(
-            url, self.__getOnLoadHandlerJS(chart_data, metadata))
+        html = '<div><script>({})()</script><iframe id="jupyter-ch" src="{}" width="100%" height="1080" /></div>'.format(
+            self.__getOnLoadHandlerJS(chart_data, metadata), url)
         return IPython.display.HTML(html)
 
     def __getOnLoadHandlerJS(self, chart_data, metadata={}):
