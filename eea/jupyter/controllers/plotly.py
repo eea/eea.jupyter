@@ -2,7 +2,6 @@ import IPython
 import requests
 from urllib.parse import urlparse
 
-
 class PlotlyController:
     """
     A class that represents a Plotly controller.
@@ -21,24 +20,32 @@ class PlotlyController:
         self.path = self.__sanitizePath(self.url_tuple.path)
 
     def __sanitizePath(self, path):
-        return path.replace("/edit", "").replace("/add", "")
+        return path.replace("/edit", "").replace("/add", "").rstrip('/')
 
     def uploadPlotly(self, chart_data, metadata):
-        url = self.host + '/login?return_url='
+        parent_of_subpage = self.path.split('/')[:-1]
+        parent_status = requests.get(self.host + '/'.join(parent_of_subpage)).status_code
 
-        status = requests.get(url).status_code
-
-        if status in [200, 401, 403]:
-            url += self.path + '/edit'
+        if parent_status == 404:
+            print(f"The path {'/'.join(parent_of_subpage)} does not exist! Please try again.")
+            return
         else:
-            url += self.path + '/add'
-
-        html = '<div><script>({})()</script><iframe id="jupyter-ch" src="{}" width="100%" height="1080" /></div>'.format(
+            url = self.host
+    
+            status = requests.get(self.host + self.path).status_code
+    
+            if status in [200, 401, 403]:
+                url += self.path + '/edit'
+            else:
+                url += '/'.join(self.path.split('/')[:-1]) + '/add?type=visualization'
+    
+            html = '<div><script>({})()</script><iframe name="jupyter" id="jupyter-ch" src="{}" width="100%" height="1080""/></div>'.format(
             self.__getOnLoadHandlerJS(chart_data, metadata), url)
         return IPython.display.HTML(html)
 
     def __getOnLoadHandlerJS(self, chart_data, metadata={}):
-        return open('./scripts/plotly.js', 'r').read() % ({
+        metadata["id"] = self.path.split('/')[-1]
+        return open('./eea/jupyter/controllers/scripts/plotly.js', 'r').read() % ({
             "type": 'jupyter-ch:setContent',
             "content": {
                 **metadata,
