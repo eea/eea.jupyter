@@ -1,19 +1,19 @@
 function onLoadHandler() {
-  function emitPostMessage(event) {
-      if (event.data.type !== 'jupyter-ch:getContent') return;
-      el = document.getElementById('jupyter-ch')
-      if (el) {
-        if (event.data.content?.auth === false) {
-          window.frames["jupyter"].location = 'http://localhost:3000/en/login?return_url=' + window.frames["jupyter"].pathname
-        }
-        el.contentWindow.postMessage(%s, '*')
-      }
+  function handleMessage(event) {
+    jupyterWindow = window.frames["jupyter"]
+    if (!event.data.type.startsWith('jupyter-ch') || !jupyterWindow) return;
+    if (event.data.type === 'jupyter-ch:login' && !event.data.content?.auth) {
+      jupyterWindow.location = jupyterWindow.location + '/login'
+    }
+    if (event.data.type === 'jupyter-ch:getContent') {
+      el.contentWindow.postMessage(%s, '*')
+    }
   }
-  if (window.jupyterCh?.emitPostMessage) {
-      window.removeEventListener('message', window.jupyterCh.emitPostMessage)
+  if (window.jupyterCh?.handleMessage) {
+    window.removeEventListener('message', window.jupyterCh.handleMessage)
   }
-  window.addEventListener('message', emitPostMessage)
+  window.addEventListener('message', handleMessage)
   window.jupyterCh = {
-      emitPostMessage
+    handleMessage
   }
 }
