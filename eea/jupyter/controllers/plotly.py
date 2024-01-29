@@ -40,9 +40,9 @@ class PlotlyController:
             status = requests.get(self.host + self.path).status_code
 
             if status in [200, 401, 403]:
-                url += self.path + '/edit?jupyter=y'
+                url += self.path + '/edit'
             else:
-                url += '/'.join(parent_path) + '/add?type=visualization&jupyter=y'
+                url += '/'.join(parent_path) + '/add?type=visualization'
 
             html = '<div><script>({})()</script><iframe name="jupyter" src="{}" width="100%" height="1080""/></div>'.format(
                 self.__getOnLoadHandlerJS(chart_data, metadata), url)
@@ -51,6 +51,8 @@ class PlotlyController:
     def __getOnLoadHandlerJS(self, chart_data, metadata={}):
         metadata["id"] = self.path_parts[-1]
         return open('./eea/jupyter/controllers/scripts/plotly.js', 'r').read() % ({
+            "host": self.host
+        }, {
             "type": 'jupyter-ch:setContent',
             "content": {
                 **metadata,
