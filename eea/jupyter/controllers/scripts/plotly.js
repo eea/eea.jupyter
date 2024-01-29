@@ -1,15 +1,18 @@
 function onLoadHandler() {
-  const self = %s
-  const data = %s
+  const props = %s
+  const { host, content } = props || {}
   function handleMessage(event) {
     jupyterWindow = window.frames["jupyter"]
     if (!event.data.type?.startsWith('jupyter-ch') || !jupyterWindow) return;
     if (event.data.type === 'jupyter-ch:login' && !event.data.content?.auth) {
       const location = event.data.content.location || {}
-      jupyterWindow.location = self.host + '/login?return_url=' + location.pathname + location.search
+      jupyterWindow.location = host + '/login?return_url=' + location.pathname + location.search
     }
     if (event.data.type === 'jupyter-ch:getContent') {
-      jupyterWindow.postMessage(data, '*')
+      jupyterWindow.postMessage({
+        type: 'jupyter-ch:setContent',
+        content
+      }, '*')
     }
   }
   if (window.jupyterCh?.handleMessage) {
