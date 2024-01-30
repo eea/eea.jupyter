@@ -1,7 +1,9 @@
-import IPython
-import requests
+"""PlotlyController
+"""
 from urllib.parse import urlparse
 import json
+import requests
+import IPython
 
 
 class PlotlyController:
@@ -60,28 +62,27 @@ class PlotlyController:
             print(
                 "The path %s does not exist! Please try again." %
                 ('/'.join(parent_path)))
-            return
+            return None
+        url = self.host
+
+        status = requests.get(self.host + self.path).status_code
+
+        if status in [200, 401, 403]:
+            url += self.path + '/edit'
         else:
-            url = self.host
+            url += '/'.join(parent_path) + '/add?type=visualization'
 
-            status = requests.get(self.host + self.path).status_code
-
-            if status in [200, 401, 403]:
-                url += self.path + '/edit'
-            else:
-                url += '/'.join(parent_path) + '/add?type=visualization'
-
-            html = """
-            <div>
-                <script>({})()</script>
-                <iframe name="jupyter" src="{}" width="100%" height="1080""/>
-            </div>""".format(
-                self.__getOnLoadHandlerJS(chart_data, metadata),
-                url
-            )
+        html = """
+        <div>
+            <script>({})()</script>
+            <iframe name="jupyter" src="{}" width="100%" height="1080""/>
+        </div>""".format(
+            self.__getOnLoadHandlerJS(chart_data, metadata),
+            url
+        )
         return IPython.display.HTML(html)
 
-    def __getOnLoadHandlerJS(self, chart_data, metadata={}):
+    def __getOnLoadHandlerJS(self, chart_data, metadata):
         """
         Returns the JavaScript code for the onLoad handler.
 
@@ -100,7 +101,7 @@ class PlotlyController:
             "host": self.host,
             "type": 'jupyter-ch:setContent',
             "content": {
-                **metadata,
+                **(metadata or {}),
                 "visualization": {
                     "chartData": chart_data
                 }
