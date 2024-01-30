@@ -94,12 +94,11 @@ class PlotlyController:
             str: The JavaScript code for the onLoad handler.
         """
         metadata["id"] = self.path_parts[-1]
-        with open('./eea/jupyter/controllers/scripts/plotly.js', 'r') as file:
+        with open('../scripts/plotly.js', 'r') as file:
             js_template = file.read()
 
         js_code = js_template.replace('__PROPS__', json.dumps({
             "host": self.host,
-            "type": 'jupyter-ch:setContent',
             "content": {
                 **(metadata or {}),
                 "visualization": {
