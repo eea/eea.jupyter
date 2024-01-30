@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 function onLoadHandler() {
   const props = __PROPS__;
   const { host, content } = props || {};
