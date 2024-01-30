@@ -1,7 +1,7 @@
 import IPython
 import requests
 from urllib.parse import urlparse
-
+import json
 
 class PlotlyController:
     """
@@ -61,3 +61,21 @@ class PlotlyController:
                 }
             }
         })
+    
+    def __getOnLoadHandlerJS(self, chart_data, metadata={}):
+        metadata["id"] = self.path_parts[-1]
+        with open('./eea/jupyter/controllers/scripts/plotly.js', 'r') as file:
+            js_template = file.read()
+
+        js_code = js_template.replace('__PROPS__', json.dumps({
+            "host": self.host,
+            "type": 'jupyter-ch:setContent',
+            "content": {
+                **metadata,
+                "visualization": {
+                    "chartData": chart_data
+                }
+            }
+        }))
+
+        return js_code
