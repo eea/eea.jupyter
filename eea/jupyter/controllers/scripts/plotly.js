@@ -2,7 +2,7 @@ function onLoadHandler() {
   const props = __PROPS__;
   const { host, content } = props || {};
   function handleMessage(event) {
-    jupyterWindow = window.frames["jupyter"];
+    jupyterWindow = window.frames.jupyter;
     if (!event.data.type?.startsWith("jupyter-ch") || !jupyterWindow) return;
     if (event.data.type === "jupyter-ch:login" && !event.data.content?.auth) {
       const location = event.data.content.location || {};

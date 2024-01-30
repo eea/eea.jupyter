@@ -7,7 +7,13 @@ from setuptools import find_packages, setup
 
 NAME = "eea.jupyter"
 PATH = NAME.split(".") + ["version.txt"]
-VERSION = open(join(*PATH)).read().strip()
+
+with open(join(*PATH)) as f:
+    VERSION = f.read().strip()
+with open("README.rst") as f:
+    README = f.read()
+with open(os.path.join("docs", "HISTORY.txt")) as f:
+    HISTORY = f.read()
 
 setup(
     name=NAME,
@@ -15,8 +21,8 @@ setup(
     description="eea.jupyter utilities for jupyter notebook",
     long_description_content_type="text/x-rst",
     long_description=(
-        open("README.rst").read() + "\n" +
-        open(os.path.join("docs", "HISTORY.txt")).read()
+        README + "\n" +
+        HISTORY
     ),
     classifiers=[
         "Environment :: Web Environment",
