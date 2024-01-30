@@ -1,6 +1,7 @@
 """PlotlyController
 """
 from urllib.parse import urlparse
+import os
 import json
 import requests
 import IPython
@@ -94,7 +95,10 @@ class PlotlyController:
             str: The JavaScript code for the onLoad handler.
         """
         metadata["id"] = self.path_parts[-1]
-        with open('../scripts/plotly.js', 'r') as file:
+        with open(
+            os.getcwd() + '/../scripts/plotly.js',
+            'r'
+        ) as file:
             js_template = file.read()
 
         js_code = js_template.replace('__PROPS__', json.dumps({
