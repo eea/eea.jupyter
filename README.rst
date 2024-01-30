@@ -4,9 +4,9 @@ eea.jupyter
 .. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.jupyter/develop
   :target: https://ci.eionet.europa.eu/job/eea/job/eea.jupyter/job/develop/display/redirect
   :alt: Develop
-.. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.jupyter/main
-  :target: https://ci.eionet.europa.eu/job/eea/job/eea.jupyter/job/main/display/redirect
-  :alt: Main
+.. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.jupyter/master
+  :target: https://ci.eionet.europa.eu/job/eea/job/eea.jupyter/job/master/display/redirect
+  :alt: Master
 
 The eea.jupyter is a jupyter utility package for EEA.
 
