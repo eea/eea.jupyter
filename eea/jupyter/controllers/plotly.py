@@ -3,6 +3,7 @@ import requests
 from urllib.parse import urlparse
 import json
 
+
 class PlotlyController:
     """
     A class that represents a Plotly controller.
@@ -11,20 +12,46 @@ class PlotlyController:
       url (str): The URL of the plotly visualization to be added or edited.
 
     Methods:
-      __init__(self, url): Initializes a new instance of the PlotlyController class.
+      __init__(self, url): new instance of the PlotlyController class.
       uploadPlotly(self, chart_data, metadata): Uploads Plotly chart data.
     """
 
     def __init__(self, url):
+        """
+        Initializes a Plotly object with the given URL.
+
+        Args:
+            url (str): The URL to be parsed and used to initalize the object.
+        """
         self.url_tuple = urlparse(url)
         self.host = self.url_tuple.scheme + "://" + self.url_tuple.netloc
         self.path = self.__sanitizePath(self.url_tuple.path)
         self.path_parts = self.path.split('/')
 
     def __sanitizePath(self, path):
+        """
+        Sanitizes the given path.
+
+        Args:
+            path (str): The path to be sanitized.
+
+        Returns:
+            str: The sanitized path.
+        """
         return path.replace("/edit", "").replace("/add", "").rstrip('/')
 
     def uploadPlotly(self, chart_data, metadata):
+        """
+        Uploads a Plotly chart to a specified path and show iframe.
+
+        Args:
+            chart_data (dict): The data for the Plotly chart.
+            metadata (dict): Additional metadata for the chart.
+
+        Returns:
+            IPython.display.HTML: The HTML code to display the Plotly chart.
+        """
+
         parent_path = self.path_parts[:-1]
         parent_status = requests.get(
             self.host + '/'.join(parent_path)).status_code
@@ -44,25 +71,27 @@ class PlotlyController:
             else:
                 url += '/'.join(parent_path) + '/add?type=visualization'
 
-            html = '<div><script>({})()</script><iframe name="jupyter" src="{}" width="100%" height="1080""/></div>'.format(
-                self.__getOnLoadHandlerJS(chart_data, metadata), url)
+            html = """
+            <div>
+                <script>({})()</script>
+                <iframe name="jupyter" src="{}" width="100%" height="1080""/>
+            </div>""".format(
+                self.__getOnLoadHandlerJS(chart_data, metadata),
+                url
+            )
         return IPython.display.HTML(html)
 
     def __getOnLoadHandlerJS(self, chart_data, metadata={}):
-        metadata["id"] = self.path_parts[-1]
-        return open('./eea/jupyter/controllers/scripts/plotly.js', 'r').read() % ({
-            "host": self.host
-        }, {
-            "type": 'jupyter-ch:setContent',
-            "content": {
-                **metadata,
-                "visualization": {
-                    "chartData": chart_data
-                }
-            }
-        })
-    
-    def __getOnLoadHandlerJS(self, chart_data, metadata={}):
+        """
+        Returns the JavaScript code for the onLoad handler.
+
+        Args:
+            chart_data (dict): The chart data.
+            metadata (dict, optional): Additional metadata. Defaults to {}.
+
+        Returns:
+            str: The JavaScript code for the onLoad handler.
+        """
         metadata["id"] = self.path_parts[-1]
         with open('./eea/jupyter/controllers/scripts/plotly.js', 'r') as file:
             js_template = file.read()
