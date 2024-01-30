@@ -96,7 +96,7 @@ class PlotlyController:
         """
         metadata["id"] = self.path_parts[-1]
         with open(
-            os.path.abspath(__file__) + '/../scripts/plotly.js',
+            os.path.dirname(os.path.abspath(__file__)) + '/../scripts/plotly.js',
             'r'
         ) as file:
             js_template = file.read()
