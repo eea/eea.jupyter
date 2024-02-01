@@ -2,7 +2,7 @@
 """
 
 import json
-from controllers.plotly import PlotlyController
+from eea.jupyter.controllers.plotly import PlotlyController
 
 
 def uploadPlotly(url, fig, **metadata):

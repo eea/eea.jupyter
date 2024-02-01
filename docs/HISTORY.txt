@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.8 - (2024-02-01)
+---------------------------
+* Change: fix import
+  [razvanMiu]
+
 0.7 - (2024-02-01)
 ---------------------------
 * Change: add uploadPlotly function wrapper
