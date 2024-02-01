@@ -43,18 +43,16 @@ class PlotlyController:
         """
         return path.replace("/edit", "").replace("/add", "").rstrip('/')
 
-    def uploadPlotly(self, chart_data, metadata):
+    def uploadPlotly(self, chart_data, **metadata):
         """
         Uploads a Plotly chart to a specified path and show iframe.
 
         Args:
-            chart_data (dict): The data for the Plotly chart.
             metadata (dict): Additional metadata for the chart.
 
         Returns:
             IPython.display.HTML: The HTML code to display the Plotly chart.
         """
-
         parent_path = self.path_parts[:-1]
         parent_status = requests.get(
             self.host + '/'.join(parent_path)).status_code
@@ -78,12 +76,12 @@ class PlotlyController:
             <script>({})()</script>
             <iframe name="jupyter" src="{}" width="100%" height="1080""/>
         </div>""".format(
-            self.__getOnLoadHandlerJS(chart_data, metadata),
+            self.__getOnLoadHandlerJS(chart_data, **metadata),
             url
         )
         return IPython.display.HTML(html)
 
-    def __getOnLoadHandlerJS(self, chart_data, metadata):
+    def __getOnLoadHandlerJS(self, chart_data, **metadata):
         """
         Returns the JavaScript code for the onLoad handler.
 
