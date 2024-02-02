@@ -15,7 +15,7 @@ function onLoadHandler() {
           type: "jupyter-ch:setContent",
           content,
         },
-        "*"
+        host
       );
     }
   }

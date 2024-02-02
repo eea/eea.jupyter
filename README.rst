@@ -28,7 +28,7 @@ Usage
   
 .. code-block:: python
 
-  from eea.jupyter import PlotlyController
+  from eea.jupyter import uploadPlotly
 
 
 3. Upload a plotly figure
