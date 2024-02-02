@@ -1,8 +1,10 @@
 Changelog
 =========
 
-0.9-dev0 - (unreleased)
+0.9 - (2024-02-02)
 ---------------------------
+* Change: update readme + set postMessage origin
+  [razvanMiu]
 
 0.8 - (2024-02-01)
 ---------------------------
