@@ -42,6 +42,7 @@ Note: step 3 should be run as the last part of notebook cell, otherwise the plot
 Note: updatePlotly function can be used like this:
 
 .. code-block:: python
+
   metadata = {"title":"My visualization"}
   uploadPlotly(url, fig, **metadata)
   uploadPlotly(url, fig, **{"title":"My visualization"})
