@@ -38,7 +38,15 @@ Usage
   uploadPlotly(url, fig, **metadata)
 
 Note: step 3 should be run as the last part of notebook cell, otherwise the plotly editor will not be displayed in the notebook.
+Note: updatePlotly function can be used like this:
 
+.. code-block:: python
+  metadata = {"title":"My visualization"}
+  uploadPlotly(url, fig, **metadata)
+  uploadPlotly(url, fig, **{"title":"My visualization"})
+  uploadPlotly(url, fig, title="My visualization")
+
+Note: fig can be a plotly figure object (plotly.graph_objs.Figure) or a json string.
 
 Install
 =======

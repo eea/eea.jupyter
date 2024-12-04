@@ -22,5 +22,5 @@ def uploadPlotly(url, fig, **metadata):
     if fig is None:
         raise ValueError("Figure cannot be None")
     plotlyCtrl = PlotlyController(url)
-    chart_data = json.loads(fig.to_json())
+    chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
     return plotlyCtrl.uploadPlotly(chart_data, **metadata)
