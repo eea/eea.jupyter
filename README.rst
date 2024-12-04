@@ -38,6 +38,7 @@ Usage
   uploadPlotly(url, fig, **metadata)
 
 Note: step 3 should be run as the last part of notebook cell, otherwise the plotly editor will not be displayed in the notebook.
+
 Note: updatePlotly function can be used like this:
 
 .. code-block:: python
