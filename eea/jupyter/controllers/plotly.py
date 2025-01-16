@@ -34,7 +34,7 @@ class PlotlyController:
         url = kwargs.get("url", None)
         fig = kwargs.get("fig", None)
         title = kwargs.get("title", None)
-        id = kwargs.get("id", None)
+        _id = kwargs.get("id", None)
         topics = kwargs.get("topics", None)
         temporal_coverage = kwargs.get("temporal_coverage", None)
         geo_coverage = kwargs.get("geo_coverage", None)
@@ -48,7 +48,7 @@ class PlotlyController:
             return "Figure must be a Plotly Figure object or a dictionary"
         if title is not None and not title:
             return "Title cannot be empty"
-        if id is not None and not id:
+        if _id is not None and not _id:
             return "Id cannot be empty"
         if topics is not None and not isinstance(topics, list):
             return "Topics must be a list"
@@ -82,9 +82,7 @@ class PlotlyController:
         if err:
             return err
 
-        err = self.__parse_temporal_coverage(temporal_coverage)
-        if err:
-            return err
+        self.__parse_temporal_coverage(temporal_coverage)
 
         err = self.__parse_geo_coverage(geo_coverage)
         if err:
