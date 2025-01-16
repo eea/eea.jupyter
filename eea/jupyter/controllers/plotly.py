@@ -292,9 +292,8 @@ class PlotlyController:
             if not hasTitle or not hasOrganization or not hasLink:
                 return (
                     "Invalid data provenance. "
-                    f"Must contain title, organisation and link, got: {
-                        provenance
-                    }"
+                    "Must contain title, organisation "
+                    f"and link, got: {provenance}"
                 )
             self.metadata["data_provenance"]["data"].append({
                 "@id": str(uuid4()),
