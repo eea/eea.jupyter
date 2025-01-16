@@ -2,12 +2,12 @@
 """
 from urllib.parse import urlparse
 from uuid import uuid4
-import os
-import json
-import requests
-import IPython
 import getpass
+import IPython
+import json
+import os
 import plotly
+import requests
 
 
 class PlotlyController:
