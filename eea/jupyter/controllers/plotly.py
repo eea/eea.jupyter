@@ -3,11 +3,11 @@
 from urllib.parse import urlparse
 from uuid import uuid4
 import getpass
-import IPython
 import json
 import os
-import plotly
 import requests
+import plotly
+import IPython
 
 
 class PlotlyController:
