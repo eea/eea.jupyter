@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.2-dev0 - (unreleased)
+---------------------------
+
 1.1 - (2025-01-16)
 ---------------------------
 * Change: Add new function, uplod_plotly, to automate jupyter workflow
