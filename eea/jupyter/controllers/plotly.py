@@ -197,6 +197,9 @@ class PlotlyController:
         return None
 
     def __parse_topics(self, topics):
+        """
+        Parses the topics.
+        """
         self.metadata["topics"] = []
         if topics is None or topics and len(topics) == 0:
             return None
@@ -221,6 +224,9 @@ class PlotlyController:
         return None
 
     def __parse_temporal_coverage(self, temporal_coverage):
+        """
+        Parses the temporal coverage.
+        """
         self.metadata["temporal_coverage"] = {
             "temporal": []
         }
@@ -233,6 +239,9 @@ class PlotlyController:
         return None
 
     def __parse_geo_coverage(self, geo_coverage):
+        """
+        Parses the geo coverage.
+        """
         self.metadata["geo_coverage"] = {
             "geolocation": []
         }
@@ -277,6 +286,9 @@ class PlotlyController:
         return None
 
     def __parse_data_provenance(self, data_provenance):
+        """
+        Parses the data provenance.
+        """
         self.metadata["data_provenance"] = {
             "data": []
         }
@@ -299,6 +311,7 @@ class PlotlyController:
                 "@id": str(uuid4()),
                 **provenance
             })
+        return None
 
     def get_metadata(self, **kwargs):
         """

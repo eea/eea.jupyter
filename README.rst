@@ -133,14 +133,16 @@ Metadata
 ========
 In this section you will learn about various metadata that can be specified when calling :code:`upload_plotly`.
 
-- :code:`title` (str): sets the title. If specified it shouldn't be empty
-- :code:`description` (str): sets the description
 - :code:`figure_note` (slate): sets the figure note
 - :code:`topics` (list): sets the list of strings for topics (e.g., ["Agriculture and food", "Bathing water quality"])
 - :code:`temporal_coverage` (list): sets the list of years for temporal coverage (e.g., [2022, 2023, 2024])
 - :code:`geo_coverage` (list): sets the list of strings for geographical coverage (e.g., ["Italy", "Romania"])
 - :code:`subjects` (list): sets the list of strings for tags (e.g., ["tag 1", "tag 2"])
 - :code:`data_provenance` (list) sets the list of data provenance (e.g., [{ "title": "European Environment Agency", "organization": "EEA", "link": "https://eea.europa.eu"}])
+
+If any of these doesn't meet the required format, you will get an error explaining what is wrong.
+
+If, for example, you specify :code:`topics = ["Agriculture and fod"]` with a typo, you will get an error because the topic is not in the topics vocabulary and a list with the available topics will be printed.
 
 Eggs repository
 ===============
