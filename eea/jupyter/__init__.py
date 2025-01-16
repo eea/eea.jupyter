@@ -1,10 +1,11 @@
 """ Main
 """
 
-from eea.jupyter.controllers.plotly import PlotlyController
-
 import logging
 import json
+
+from eea.jupyter.controllers.plotly import PlotlyController
+
 
 plotlyCtrl = PlotlyController()
 
@@ -32,6 +33,8 @@ def upload_plotly(**kwargs):
     except Exception:
         return logging.error(
             "Error handling visualization at %s" % kwargs.get("url", ""))
+
+    return None
 
 
 def uploadPlotly(url, fig, **metadata):

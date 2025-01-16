@@ -267,11 +267,10 @@ class PlotlyController:
                         get_err_msg(response)))
         for location in geo_coverage:
             if location not in self.resources["geo_coverage"]:
+                keys = list(self.resources['geo_coverage'].keys())
                 return (
                     f"\"{location}\" is not a valid geo coverage. "
-                    f"Allowed values are: {
-                        list(self.resources['geo_coverage'].keys())
-                    }"
+                    f"Allowed values are: {keys}"
                 )
             self.metadata["geo_coverage"]["geolocation"].append(
                 self.resources["geo_coverage"][location])
