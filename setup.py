@@ -45,5 +45,6 @@ setup(
     install_requires=[
         'setuptools',
         # -*- Extra requirements: -*-
+        "kaleido"
     ]
 )
