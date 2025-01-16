@@ -2,6 +2,7 @@
 """
 from urllib.parse import urlparse
 from uuid import uuid4
+import base64
 import getpass
 import json
 import os
@@ -315,6 +316,8 @@ class PlotlyController:
         """
         Filters out specific keys from the provided keyword arguments.
         """
+        fig = kwargs.get("fig")
+        png = base64.b64encode(fig.to_image()).decode('ascii')
         return {
             **{k: v for k, v in kwargs.items() if k not in [
                 'url',
@@ -325,6 +328,12 @@ class PlotlyController:
                 'auth_token',
                 '__ac__key'
             ]},
+            "preview_image": {
+                "content-type": "image/png",
+                "encoding": "base64",
+                "filename": "preview.png",
+                "data": png
+            },
             "topics": self.metadata.get("topics", []),
             "temporal_coverage": self.metadata.get(
                 "temporal_coverage", {"temporal": []}
