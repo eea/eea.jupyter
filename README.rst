@@ -12,47 +12,135 @@ The eea.jupyter is a jupyter utility package for EEA.
 
 .. contents::
 
-Upgrade
-=======
 
-
-Usage
-=============
-1. Install eea.jupyter package
-  
+Installation
+============
 .. code-block:: console
 
   pip install eea.jupyter
 
-2. Import uploadPlotly in your notebook
-  
-.. code-block:: python
 
-  from eea.jupyter import uploadPlotly
-
-
-3. Upload a plotly figure
+Usage
+=====
 
 .. code-block:: python
 
-  uploadPlotly(url, fig, **metadata)
+  from eea.jupyter import upload_plotly
 
-Note: step 3 should be run as the last part of notebook cell, otherwise the plotly editor will not be displayed in the notebook.
+Uploads or creates a `Chart (interactive)` to a specified `url`. This function accepts any number of keyword arguments.
 
-Note: updatePlotly function can be used like this:
+Parameters:
+
+- :code:`url` (required): The URL of the visualization to be updated or created, e.g. :code:`https://eea.europa.eu/en/sandbox/chart-1`. Default: :code:`None`
+- :code:`fig` (required): The figure to be used as part of the visualization. Can accept a :code:`plotly.graph_objs.Figure` or a :code:`dict`. Default: :code:`None`
+- :code:`api_url` (optional): The base URL of the plone API, e.g., :code:`https://eea.europa.eu/admin/++api++`. Default:  :code:`/++api++` concatenated to the hostname of the visualization URL, e.g.: if the :code:`url` is :code:`https://biodiversity.eea.europa.eu/en/sandbox/chart-1` then the default value for :code:`api_url` will be :code:`https://biodiversity.eea.europa.eu/admin/++api++`
+- :code:`auth_provider` (optional): Provider to be used for authentication. Allowed values: `basic`, `microsoft`. Default: `basic`
+- :code:`auth_token` (optional): Token to be used instead of allways authenticating. Default: :code:`None`
+- :code:`__ac__key` (optional): Key to be used in cookies if :code:`microsoft` auth_provider is used. Default: :code:`__ac`
+- :code:`**metadata` (optional): Any :code:`Chart (interactive)` metadata desired to be customized, e.g., `title`, `description`, `topics`
+
+**Example 1**: how to use it with basic authentication
 
 .. code-block:: python
 
-  metadata = {"title":"My visualization"}
-  uploadPlotly(url, fig, **metadata)
-  uploadPlotly(url, fig, **{"title":"My visualization"})
-  uploadPlotly(url, fig, title="My visualization")
+  # Cell 1 will have some logic to generate a fig
+  # Cell 2
+  from eea.jupyter import upload_plotly
 
-Note: fig can be a plotly figure object (plotly.graph_objs.Figure) or a json string.
+  url = "https://www.eea.europa.eu/en/sandbox/miu-test/chart-1"
 
-Install
-=======
+  metadata = {
+    "title": "Chart 1 example",
+    "description": "This exemplifies how to use upload_plotly"
+  }
 
+  upload_plotly(url=url, fig=fig, **metadata)
+
+In this example you specify the visualization that you want to update, if it already exists, or where you want to create it. In case the visualization doesn't exists it will be created inside of :code:`https://www.eea.europa.eu/en/sandbox/miu-test` with the id of :code:`chart-1`.
+After calling :code:`upload_plotly` you will be prompted with :code:`username` and :code:`password` inputs.
+
+**Example 2**: how to use it with microsoft authentication
+
+.. code-block:: python
+
+  # Cell 1 will have some logic to generate a fig
+  # Cell 2
+  from eea.jupyter import upload_plotly
+
+  url = "https://www.eea.europa.eu/en/sandbox/miu-test/chart-1"
+
+  metadata = {
+    "title": "Chart 1 example",
+    "description": "This exemplifies how to use upload_plotly"
+  }
+
+  upload_plotly(url=url, fig=fig, auth_provider="microsoft", __ac__key="__ac__eea", **metadata)
+
+In this example you specify the microsoft auth_provider and also the key of __ac.
+
+After calling :code:`upload_plotly` you will be prompted with :code:`auth_token` input which expects a valid :code:`__ac` token. To get the :code:`__ac` you will need to authenticate on https://www.eea.europa.eu/admin and get the value of :code:`__ac__eea` cookie. You can use a cookie chrome extension to retrive the value of the cookie.
+
+**Example 3**: initialize :code:`auth_token` so that you can pass the authentication input
+
+.. code-block:: python
+
+  # Cell 1 will have some logic to generate a fig
+  # Cell 2
+  auth_token = input()
+  # Cell 3
+  from eea.jupyter import upload_plotly
+
+  url = "https://www.eea.europa.eu/en/sandbox/miu-test/chart-1"
+
+  metadata = {
+    "title": "Chart 1 example",
+    "description": "This exemplifies how to use upload_plotly"
+  }
+
+  upload_plotly(url=url, fig=fig, auth_provider="microsoft", __ac__key="__ac__eea", auth_token=auth_token, **metadata)
+
+In this example, firstly, you will be prompted with specifying the value of :code:`auth_token`, which will then be added as a parameter to :code:`upload_plotly`. This allows you to initialize the value of :code:`auth_token` only once, then you can run cell 3 as many times as you like.
+
+Same behaviour regardless of the :code:`auth_provider`.
+
+**Example 4**: passing multiple types of metadata
+
+.. code-block:: python
+
+  # Cell 1 will have some logic to generate a fig
+  # Cell 2
+  auth_token = input()
+  # Cell 3
+  from eea.jupyter import upload_plotly
+
+  url = "https://www.eea.europa.eu/en/sandbox/miu-test/chart-1"
+
+  metadata = {
+    "title": "Chart 1 example",
+    "description": "This exemplifies how to use upload_plotly",
+    "topics": ["Agriculture and food"],
+    "temporal_coverage": [2011, 2020],
+    "geo_coverage": ["Italy"],
+    "subjects": ["tag 1"],
+    "data_provenance": [
+        {"title": "European Environment Agency", "organisation": "EEA", "link": "https://eea.europa.eu"}
+    ]
+  }
+
+  upload_plotly(url=url, fig=fig, auth_provider="microsoft", __ac__key="__ac__eea", auth_token=auth_token, **metadata)
+
+Metadata
+========
+In this section you will learn about various metadata that can be specified when calling :code:`upload_plotly`.
+
+- :code:`title` (str): sets the title. If specified it shouldn't be empty
+- :code:`description` (str): sets the description
+- :code:`figure_note` (slate): sets the figure note
+- :code:`topics` (list): sets the list of strings for topics (e.g., ["Agriculture and food", "Bathing water quality"])
+- :code:`temporal_coverage` (list): sets the list of years for temporal coverage (e.g., [2022, 2023, 2024])
+- :code:`geo_coverage` (list): sets the list of strings for geographical coverage (e.g., ["Italy", "Romania"])
+- :code:`subjects` (list): sets the list of strings for tags (e.g., ["tag 1", "tag 2"])
+- :code:`data_provenance` (list) sets the list of data provenance (e.g., [{ "title": "European Environment Agency", "organization": "EEA", "link": "https://eea.europa.eu"}])
 
 Eggs repository
 ===============

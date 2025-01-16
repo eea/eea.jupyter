@@ -1,26 +1,45 @@
 """ Main
 """
 
-import json
 from eea.jupyter.controllers.plotly import PlotlyController
+
+import logging
+import json
+
+plotlyCtrl = PlotlyController()
+
+
+def upload_plotly(**kwargs):
+    """
+    Uploads a Plotly figure to a specified API endpoint.
+
+    This function validates the input, initializes the Plotly controller,
+    and uploads the Plotly figure to the API. If any step fails, it logs
+    an error message.
+    """
+    err = plotlyCtrl.init(**kwargs)
+    if err:
+        return logging.error(err)
+
+    fig = kwargs.get("fig", None)
+
+    chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
+
+    try:
+        err = plotlyCtrl.upload_plotly(chart_data=chart_data, **kwargs)
+        if err:
+            return logging.error(err)
+    except Exception:
+        return logging.error(
+            "Error handling visualization at %s" % kwargs.get("url", ""))
 
 
 def uploadPlotly(url, fig, **metadata):
     """
-    Uploads a Plotly chart to a specified URL.
-
-    Parameters:
-    - url (str): The URL where the chart will be uploaded.
-    - fig (plotly.graph_objs.Figure): The Plotly figure object.
-    - **metadata: Additional metadata to be passed to the PlotlyController.
-
-    Returns:
-    - The result of the PlotlyController's uploadPlotly method.
+    Uploads a Plotly figure to a specified URL with additional metadata.
     """
-    if url is None:
-        raise ValueError("URL cannot be None")
-    if fig is None:
-        raise ValueError("Figure cannot be None")
-    plotlyCtrl = PlotlyController(url)
+    err = plotlyCtrl.init(url=url, **metadata)
+    if err:
+        return logging.error(err)
     chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
     return plotlyCtrl.uploadPlotly(chart_data, **metadata)
