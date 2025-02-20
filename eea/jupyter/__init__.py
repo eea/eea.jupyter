@@ -31,7 +31,7 @@ def upload_plotly(**kwargs):
         if err:
             return logging.error(err)
     except Exception:
-        return logging.error(
+        return logging.exception(
             "Error handling visualization at %s", kwargs.get("url", ""))
 
     return None
