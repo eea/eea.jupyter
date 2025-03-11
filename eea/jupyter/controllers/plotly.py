@@ -198,11 +198,11 @@ class PlotlyController:
 
         return None
 
-    def get_theme(self, id):
+    def get_theme(self, name):
         """
         Retrieves the theme from the API.
         """
-        if not id:
+        if not name:
             return [None, "Theme id cannot be empty"]
 
         response = self.session.get(
@@ -210,24 +210,24 @@ class PlotlyController:
         if response.status_code == 200:
             themes = response.json().get("themes", [])
             for theme in themes:
-                if theme.get("id") == id:
+                if theme.get("id") == name:
                     return [{
                         "data": theme.get("data", {}),
                         "layout": theme.get("layout", {})
                     }, None]
             return [None, (
-                f"\"{id}\" is not a valid theme. "
+                f"\"{name}\" is not a valid theme. "
                 f"Allowed values are: {[theme.get('id') for theme in themes]}"
             )]
         return [None, "Could not retrieve theme. Reason: %s" % (
             get_err_msg(response)
         )]
 
-    def get_template(self, id):
+    def get_template(self, name):
         """
         Retrieves the theme from the API.
         """
-        if not id:
+        if not name:
             return [None, "Theme id cannot be empty"]
 
         response = self.session.get(
@@ -235,10 +235,10 @@ class PlotlyController:
         if response.status_code == 200:
             templates = response.json().get("templates", [])
             for template in templates:
-                if template.get("label") == id:
+                if template.get("label") == name:
                     return [template.get("visualization", {}), None]
             return [None, (
-                f"\"{id}\" is not a valid template. "
+                f"\"{name}\" is not a valid template. "
                 f"Allowed values are: "
                 f"{[template.get('label') for template in templates]}"
             )]
