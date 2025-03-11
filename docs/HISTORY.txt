@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.5-dev0 - (unreleased)
+---------------------------
+
 1.4 - (2025-03-11)
 ---------------------------
 * Change: get_theme & get_template functions added
