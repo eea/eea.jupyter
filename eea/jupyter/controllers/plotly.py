@@ -239,9 +239,8 @@ class PlotlyController:
                     return [template.get("visualization", {}), None]
             return [None, (
                 f"\"{id}\" is not a valid template. "
-                f"Allowed values are: {[
-                    template.get('label') for template in templates
-                ]}"
+                f"Allowed values are: "
+                f"{[template.get('label') for template in templates]}"
             )]
         return [None, "Could not retrieve template. Reason: %s" % (
             get_err_msg(response)
