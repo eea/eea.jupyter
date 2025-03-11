@@ -41,9 +41,9 @@ class PlotlyController:
         geo_coverage = kwargs.get("geo_coverage", None)
         data_provenance = kwargs.get("data_provenance", None)
 
-        if not isinstance(url, str) or not url:
+        if url is not None and not isinstance(url, str):
             return "URL must be a string and cannot be empty"
-        if not isinstance(
+        if fig is not None and not isinstance(
                 fig, plotly.graph_objs.Figure) and not isinstance(
                 fig, dict):
             return "Figure must be a Plotly Figure object or a dictionary"
@@ -63,13 +63,16 @@ class PlotlyController:
                 data_provenance, list):
             return "Data provenance must be a list"
 
-        self.url_tuple = urlparse(url)
-        self.host = self.url_tuple.scheme + "://" + self.url_tuple.netloc
-        self.path = self.__sanitize_path(self.url_tuple.path)
-        self.path_parts = self.path.split('/')
-        self.parent_path = '/'.join(self.path_parts[:-1])
-        self.api_url = self.api_url or "%s://%s/admin/++api++" % (
-            self.url_tuple.scheme, self.url_tuple.netloc)
+        self.api_url = self.api_url
+        if url:
+            self.url_tuple = urlparse(url)
+            self.host = self.url_tuple.scheme + "://" + self.url_tuple.netloc
+            self.path = self.__sanitize_path(self.url_tuple.path)
+            self.path_parts = self.path.split('/')
+            self.parent_path = '/'.join(self.path_parts[:-1])
+            self.api_url = self.api_url or "%s://%s/admin/++api++" % (
+                self.url_tuple.scheme, self.url_tuple.netloc
+            )
 
         self.session = requests.Session()
         self.session.headers.update({'Accept': 'application/json'})
@@ -194,6 +197,54 @@ class PlotlyController:
                 get_err_msg(response))
 
         return None
+
+    def get_theme(self, name):
+        """
+        Retrieves the theme from the API.
+        """
+        if not name:
+            return [None, "Theme id cannot be empty"]
+
+        response = self.session.get(
+            self.api_url + "/@plotly_settings")
+        if response.status_code == 200:
+            themes = response.json().get("themes", [])
+            for theme in themes:
+                if theme.get("id") == name:
+                    return [{
+                        "data": theme.get("data", {}),
+                        "layout": theme.get("layout", {})
+                    }, None]
+            return [None, (
+                f"\"{name}\" is not a valid theme. "
+                f"Allowed values are: {[theme.get('id') for theme in themes]}"
+            )]
+        return [None, "Could not retrieve theme. Reason: %s" % (
+            get_err_msg(response)
+        )]
+
+    def get_template(self, name):
+        """
+        Retrieves the theme from the API.
+        """
+        if not name:
+            return [None, "Theme id cannot be empty"]
+
+        response = self.session.get(
+            self.api_url + "/@plotly_settings")
+        if response.status_code == 200:
+            templates = response.json().get("templates", [])
+            for template in templates:
+                if template.get("label") == name:
+                    return [template.get("visualization", {}), None]
+            return [None, (
+                f"\"{name}\" is not a valid template. "
+                f"Allowed values are: "
+                f"{[template.get('label') for template in templates]}"
+            )]
+        return [None, "Could not retrieve template. Reason: %s" % (
+            get_err_msg(response)
+        )]
 
     def __parse_topics(self, topics):
         """

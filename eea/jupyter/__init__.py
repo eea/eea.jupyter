@@ -24,6 +24,10 @@ def upload_plotly(**kwargs):
 
     fig = kwargs.get("fig", None)
 
+    if not fig:
+        return logging.error(
+            "Figure must be a Plotly Figure object or a dictionary")
+
     chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
 
     try:
@@ -35,6 +39,48 @@ def upload_plotly(**kwargs):
             "Error handling visualization at %s", kwargs.get("url", ""))
 
     return None
+
+
+def get_theme(**kwargs):
+    """
+    Get the theme from the Plotly controller.
+    """
+    err = plotlyCtrl.init(**kwargs)
+    if err:
+        return logging.error(err)
+
+    [theme, err] = plotlyCtrl.get_theme(kwargs.get("theme", None))
+    if err:
+        return logging.error(err)
+    return {
+        "data": theme.get("data", {}),
+        "layout": theme.get("layout", {})
+    }
+
+
+def get_template(**kwargs):
+    """
+    Get the theme from the Plotly controller.
+    """
+    err = plotlyCtrl.init(**kwargs)
+    if err:
+        return logging.error(err)
+
+    [template, err] = plotlyCtrl.get_template(kwargs.get("template", None))
+    if err:
+        return logging.error(err)
+    chartData = template.get("chartData", {})
+    theme = chartData.get("layout", {}).get("template", {})
+    return {
+        "data": chartData.get("data", []),
+        "layout": {
+            **chartData.get("layout", {}),
+            "template": {
+                "data": theme.get("data", {}),
+                "layout": theme.get("layout", {})
+            }
+        }
+    }
 
 
 def uploadPlotly(url, fig, **metadata):
