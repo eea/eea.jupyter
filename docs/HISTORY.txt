@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.6 - (2025-03-20)
+---------------------------
+* Change: Make sure fig is a real fig before transforming it into a png
+  [razvanMiu]
+
 1.5 - (2025-03-20)
 ---------------------------
 * Change: don't extract data sources for now
