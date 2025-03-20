@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.5 - (2025-03-20)
+---------------------------
+* Change: don't extract data sources for now
+  [razvanMiu]
+
 1.4 - (2025-03-11)
 ---------------------------
 * Change: get_theme & get_template functions added
