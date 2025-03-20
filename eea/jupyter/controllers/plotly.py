@@ -8,8 +8,8 @@ import json
 import os
 import requests
 import plotly
-import IPython
 import plotly.io as pio
+import IPython
 
 
 class PlotlyController:
