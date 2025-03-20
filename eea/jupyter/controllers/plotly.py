@@ -9,6 +9,7 @@ import os
 import requests
 import plotly
 import IPython
+import plotly.io as pio
 
 
 class PlotlyController:
@@ -370,7 +371,13 @@ class PlotlyController:
         Filters out specific keys from the provided keyword arguments.
         """
         fig = kwargs.get("fig")
-        png = base64.b64encode(fig.to_image()).decode('ascii')
+        png = None
+        if not isinstance(fig, plotly.graph_objs.Figure):
+            real_fig = pio.from_json(fig, skip_invalid=True)
+            png = base64.b64encode(real_fig.to_image()).decode('ascii')
+        else:
+            png = base64.b64encode(fig.to_image()).decode('ascii')
+
         return {
             **{k: v for k, v in kwargs.items() if k not in [
                 'url',
