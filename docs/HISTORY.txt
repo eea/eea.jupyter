@@ -1,8 +1,10 @@
 Changelog
 =========
 
-1.5-dev0 - (unreleased)
+1.5 - (2025-03-20)
 ---------------------------
+* Change: don't extract data sources for now
+  [razvanMiu]
 
 1.4 - (2025-03-11)
 ---------------------------
