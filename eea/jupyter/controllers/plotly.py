@@ -165,7 +165,8 @@ class PlotlyController:
         if response.status_code == 404:
             metadata = self.get_metadata(**kwargs)
             metadata["@type"] = "visualization"
-            metadata["visualization"] = get_visualization(chart_data)
+            # metadata["visualization"] = get_visualization(chart_data)
+            metadata["visualization"] = chart_data
             if metadata.get("id", None) is None:
                 metadata["id"] = self.path_parts[-1]
             response = session.post(
@@ -180,7 +181,8 @@ class PlotlyController:
                     get_err_msg(response))
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
-            metadata["visualization"] = get_visualization(chart_data)
+            # metadata["visualization"] = get_visualization(chart_data)
+            metadata["visualization"] = chart_data
             response = session.patch(
                 self.api_url + self.path,
                 json=metadata)

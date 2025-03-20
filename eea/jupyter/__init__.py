@@ -79,7 +79,8 @@ def get_template(**kwargs):
                 "data": theme.get("data", {}),
                 "layout": theme.get("layout", {})
             }
-        }
+        },
+        "dataSources": template.get("dataSources", {})
     }
 
 
