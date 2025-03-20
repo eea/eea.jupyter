@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.7-dev0 - (unreleased)
+---------------------------
+
 1.6 - (2025-03-20)
 ---------------------------
 * Change: Make sure fig is a real fig before transforming it into a png
