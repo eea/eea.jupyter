@@ -373,7 +373,7 @@ class PlotlyController:
         fig = kwargs.get("fig")
         png = None
         if not isinstance(fig, plotly.graph_objs.Figure):
-            real_fig = pio.from_json(fig, skip_invalid=True)
+            real_fig = pio.from_json(json.dumps(fig), skip_invalid=True)
             png = base64.b64encode(real_fig.to_image()).decode('ascii')
         else:
             png = base64.b64encode(fig.to_image()).decode('ascii')
