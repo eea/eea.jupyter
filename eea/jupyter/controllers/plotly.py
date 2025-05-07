@@ -5,11 +5,9 @@ from uuid import uuid4
 import base64
 import getpass
 import json
-import os
 import requests
 import plotly
 import plotly.io as pio
-import IPython
 
 
 class PlotlyController:
@@ -146,10 +144,10 @@ class PlotlyController:
         """
         Uploads or updates a Plotly visualization to the API.
         """
-        chart_data = kwargs.get("chart_data", None)
+        visualization = kwargs.get("visualization", None)
 
-        if not isinstance(chart_data, dict):
-            return "Chart data neeeds to be a dict"
+        if not isinstance(visualization, dict):
+            return "Visualization neeeds to be a dict"
 
         session = self.session
         response = session.get(
@@ -167,7 +165,7 @@ class PlotlyController:
             metadata = self.get_metadata(**kwargs)
             metadata["@type"] = "visualization"
             # metadata["visualization"] = get_visualization(chart_data)
-            metadata["visualization"] = chart_data
+            metadata["visualization"] = visualization
             if metadata.get("id", None) is None:
                 metadata["id"] = self.path_parts[-1]
             response = session.post(
@@ -183,7 +181,7 @@ class PlotlyController:
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
             # metadata["visualization"] = get_visualization(chart_data)
-            metadata["visualization"] = chart_data
+            metadata["visualization"] = visualization
             response = session.patch(
                 self.api_url + self.path,
                 json=metadata)
@@ -214,10 +212,7 @@ class PlotlyController:
             themes = response.json().get("themes", [])
             for theme in themes:
                 if theme.get("id") == name:
-                    return [{
-                        "data": theme.get("data", {}),
-                        "layout": theme.get("layout", {})
-                    }, None]
+                    return [theme, None]
             return [None, (
                 f"\"{name}\" is not a valid theme. "
                 f"Allowed values are: {[theme.get('id') for theme in themes]}"
@@ -408,65 +403,6 @@ class PlotlyController:
             )
         }
 
-    def uploadPlotly(self, chart_data, **metadata):
-        """
-        Uploads a Plotly chart to a specified host and returns
-        an HTML iframe to display it.
-        """
-        parent_path = self.path_parts[:-1]
-        parent_status = requests.get(
-            self.host + '/'.join(parent_path)).status_code
-
-        if parent_status == 404:
-            print(
-                "The path %s does not exist! Please try again." %
-                ('/'.join(parent_path)))
-            return None
-        url = self.host
-
-        status = requests.get(self.host + self.path).status_code
-
-        if status in [200, 401, 403]:
-            url += self.path + '/edit'
-        else:
-            url += '/'.join(parent_path) + '/add?type=visualization'
-
-        html = """
-        <div>
-            <script>({})()</script>
-            <iframe name="jupyter" src="{}" width="100%" height="1080""/>
-        </div>""".format(
-            self.__getOnLoadHandlerJS(chart_data, **metadata),
-            url
-        )
-        return IPython.display.HTML(html)
-
-    def __getOnLoadHandlerJS(self, chart_data, **metadata):
-        """
-        Generates JavaScript code for handling the onLoad
-        event of a Plotly chart.
-        """
-        metadata["id"] = self.path_parts[-1]
-        with open(
-            os.path.dirname(
-                os.path.abspath(__file__)
-            ) + '/../scripts/plotly.js',
-            'r'
-        ) as file:
-            js_template = file.read()
-
-        js_code = js_template.replace('__PROPS__', json.dumps({
-            "host": self.host,
-            "content": {
-                **(metadata or {}),
-                "visualization": {
-                    "chartData": chart_data
-                }
-            }
-        }))
-
-        return js_code
-
     def __sanitize_path(self, path):
         """
         Sanitize the given path by removing specific
@@ -489,55 +425,55 @@ def get_err_msg(response):
         return response.text
 
 
-def get_visualization(chart_data):
-    """
-    Processes the given chart data to generate a visualization configuration.
-    """
-    visualization = {
-        "use_data_source": True
-    }
-    keys = ["x", "y", "z", "values", "labels"]
-    occurrences = {}
-    data = {}
+# def get_visualization(chart_data):
+#     """
+#     Processes the given chart data to generate a visualization configuration.
+#     """
+#     visualization = {
+#         "use_data_source": True
+#     }
+#     keys = ["x", "y", "z", "values", "labels"]
+#     occurrences = {}
+#     data = {}
 
-    for trace in chart_data.get("data", []):
-        for key in keys:
-            sources = trace.get(f"{key}src")
+#     for trace in chart_data.get("data", []):
+#         for key in keys:
+#             sources = trace.get(f"{key}src")
 
-            # Check if the trace has a key and if it's a list
-            if key not in trace or not isinstance(trace[key], list):
-                continue
+#             # Check if the trace has a key and if it's a list
+#             if key not in trace or not isinstance(trace[key], list):
+#                 continue
 
-            # Check if sources is defined and if it's a string
-            if isinstance(sources, str):
-                occurrences[sources] = occurrences.get(sources, 0) + 1
-                data[sources] = list(trace[key])
-                continue
+#             # Check if sources is defined and if it's a string
+#             if isinstance(sources, str):
+#                 occurrences[sources] = occurrences.get(sources, 0) + 1
+#                 data[sources] = list(trace[key])
+#                 continue
 
-            # Check if sources is defined and if it's a list
-            if isinstance(sources, list):
-                for index, source in enumerate(sources):
-                    occurrences[source] = occurrences.get(source, 0) + 1
-                    if len(sources) > 1:
-                        data[source] = list(trace[key][index])
-                    else:
-                        data[source] = list(trace[key])
-                continue
+#             # Check if sources is defined and if it's a list
+#             if isinstance(sources, list):
+#                 for index, source in enumerate(sources):
+#                     occurrences[source] = occurrences.get(source, 0) + 1
+#                     if len(sources) > 1:
+#                         data[source] = list(trace[key][index])
+#                     else:
+#                         data[source] = list(trace[key])
+#                 continue
 
-            # If sources is not defined, define the data
-            for handled_key, handled_data in data.items():
-                if all(
-                        value == handled_data[idx] for idx,
-                        value in enumerate(trace[key])):
-                    trace[f"{key}src"] = handled_key
-                    break
+#             # If sources is not defined, define the data
+#             for handled_key, handled_data in data.items():
+#                 if all(
+#                         value == handled_data[idx] for idx,
+#                         value in enumerate(trace[key])):
+#                     trace[f"{key}src"] = handled_key
+#                     break
 
-            name = f"{key}"
-            occurrences[name] = occurrences.get(name, 0) + 1
-            data[f"{name}{occurrences[name]}"] = list(trace[key])
-            trace[f"{key}src"] = f"{name}{occurrences[name]}"
+#             name = f"{key}"
+#             occurrences[name] = occurrences.get(name, 0) + 1
+#             data[f"{name}{occurrences[name]}"] = list(trace[key])
+#             trace[f"{key}src"] = f"{name}{occurrences[name]}"
 
-    visualization["chartData"] = chart_data
-    visualization["data_source"] = data
+#     visualization["chartData"] = chart_data
+#     visualization["data_source"] = data
 
-    return visualization
+#     return visualization

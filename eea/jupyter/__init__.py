@@ -28,10 +28,10 @@ def upload_plotly(**kwargs):
         return logging.error(
             "Figure must be a Plotly Figure object or a dictionary")
 
-    chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
+    visualization = fig if isinstance(fig, dict) else json.loads(fig.to_json())
 
     try:
-        err = plotlyCtrl.upload_plotly(chart_data=chart_data, **kwargs)
+        err = plotlyCtrl.upload_plotly(visualization=visualization, **kwargs)
         if err:
             return logging.error(err)
     except Exception:
@@ -52,10 +52,7 @@ def get_theme(**kwargs):
     [theme, err] = plotlyCtrl.get_theme(kwargs.get("theme", None))
     if err:
         return logging.error(err)
-    return {
-        "data": theme.get("data", {}),
-        "layout": theme.get("layout", {})
-    }
+    return theme
 
 
 def get_template(**kwargs):
@@ -69,27 +66,4 @@ def get_template(**kwargs):
     [template, err] = plotlyCtrl.get_template(kwargs.get("template", None))
     if err:
         return logging.error(err)
-    chartData = template.get("chartData", {})
-    theme = chartData.get("layout", {}).get("template", {})
-    return {
-        "data": chartData.get("data", []),
-        "layout": {
-            **chartData.get("layout", {}),
-            "template": {
-                "data": theme.get("data", {}),
-                "layout": theme.get("layout", {})
-            }
-        },
-        "dataSources": template.get("dataSources", {})
-    }
-
-
-def uploadPlotly(url, fig, **metadata):
-    """
-    Uploads a Plotly figure to a specified URL with additional metadata.
-    """
-    err = plotlyCtrl.init(url=url, **metadata)
-    if err:
-        return logging.error(err)
-    chart_data = fig if isinstance(fig, dict) else json.loads(fig.to_json())
-    return plotlyCtrl.uploadPlotly(chart_data, **metadata)
+    return template
