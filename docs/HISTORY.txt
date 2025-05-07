@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.7 - (2025-05-07)
+---------------------------
+* Change: Develop
+  [razvanMiu]
+
 1.6 - (2025-03-20)
 ---------------------------
 * Change: Make sure fig is a real fig before transforming it into a png
