@@ -9,6 +9,10 @@ import requests
 import plotly
 import plotly.io as pio
 
+from .data_sources import get_plotly_data_sources
+
+import pdb
+
 
 class PlotlyController:
     """
@@ -164,7 +168,14 @@ class PlotlyController:
         if response.status_code == 404:
             metadata = self.get_metadata(**kwargs)
             metadata["@type"] = "visualization"
-            # metadata["visualization"] = get_visualization(chart_data)
+
+            [data_sources, _] = get_plotly_data_sources(
+                visualization["data"],
+                visualization["layout"],
+                visualization["dataSources"])
+
+            visualization["dataSources"] = data_sources
+
             metadata["visualization"] = visualization
             if metadata.get("id", None) is None:
                 metadata["id"] = self.path_parts[-1]
@@ -180,7 +191,14 @@ class PlotlyController:
                     get_err_msg(response))
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
-            # metadata["visualization"] = get_visualization(chart_data)
+
+            [data_sources, _] = get_plotly_data_sources(
+                visualization["data"],
+                visualization["layout"],
+                visualization["dataSources"])
+
+            visualization["dataSources"] = data_sources
+
             metadata["visualization"] = visualization
             response = session.patch(
                 self.api_url + self.path,
