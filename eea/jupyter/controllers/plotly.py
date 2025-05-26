@@ -11,8 +11,6 @@ import plotly.io as pio
 
 from .data_sources import get_plotly_data_sources
 
-import pdb
-
 
 class PlotlyController:
     """

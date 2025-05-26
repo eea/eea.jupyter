@@ -1,3 +1,5 @@
+""" Module to handle data sources in Plotly traces and layout. """
+
 from collections.abc import Mapping
 from copy import deepcopy
 
@@ -21,6 +23,8 @@ constants = {
 
 
 def transpose(original_array):
+    """ Transpose a 2D array or convert a 1D array to a 2D array. """
+
     # if we want to transpose a uni dimensional array
     if all(not isinstance(a, list) for a in original_array):
         return [[a] for a in original_array]
@@ -35,7 +39,7 @@ def transpose(original_array):
             longest = length
 
     new_array = [[] for _ in range(longest)]
-    for outer_index, outer in enumerate(original_array):
+    for outer in original_array:
         if not isinstance(outer, list):
             outer = [outer]
         for inner_index in range(longest):
@@ -45,6 +49,11 @@ def transpose(original_array):
 
 
 def special_table_case(trace_type, src_attribute_path):
+    """
+    Check if the trace type and attribute path
+    indicate a special case for tables.
+    """
+
     return (
         trace_type == 'table' and
         any(src_attribute_path.endswith(a) for a in [
@@ -55,6 +64,11 @@ def special_table_case(trace_type, src_attribute_path):
 
 
 def maybe_transpose_data(data, src_attribute_path, trace_type):
+    """
+    Transpose data if necessary based on the
+    attribute path and trace type.
+    """
+
     if not data or (isinstance(data, list) and len(data) == 0):
         return None
 
@@ -77,6 +91,11 @@ def maybe_transpose_data(data, src_attribute_path, trace_type):
 
 
 def get_attrs_path(container, allowed_attributes):
+    """
+    Recursively search for attributes in a container
+    that match allowed attrs.
+    """
+
     src_attributes = {}
 
     def recursive_search(container, path=''):
@@ -98,8 +117,10 @@ def get_attrs_path(container, allowed_attributes):
 
 
 def get_src_attr(container, attr, src_converters=None):
+    """ Get the source attribute from a container. """
+
     key = attr + 'src'
-    src_property = nested_property(container, key).get()
+    src_property = nested_property(container, key).getVal()
     value = src_converters.to_src(src_property, container.get(
         'type')) if src_converters else src_property
     return {
@@ -111,6 +132,8 @@ def get_src_attr(container, attr, src_converters=None):
 
 
 def get_adjusted_src_attr(src_attr):
+    """ Adjust the source attribute for specific cases. """
+
     if (isinstance(src_attr['value'], list) and len(src_attr['value']) == 1 and
             src_attr['attr'] in ['x', 'y']):
         return {**src_attr, 'value': src_attr['value'][0] or None}
@@ -118,6 +141,8 @@ def get_adjusted_src_attr(src_attr):
 
 
 def get_column_names(src_array, data_source_options):
+    """ Get the column names for a given source array. """
+
     names = []
     for src in src_array:
         columns = [dso for dso in data_source_options if dso['value'] == src]
@@ -130,6 +155,8 @@ def get_column_names(src_array, data_source_options):
 
 
 def get_plotly_data_sources(data, layout, original_data_sources):
+    """ Extract data sources from Plotly data and layout. """
+
     data_sources = deepcopy(original_data_sources)
     update = {'layout': {}, 'traces': []}
     unsynced_attrs = []
@@ -229,6 +256,7 @@ def get_plotly_data_sources(data, layout, original_data_sources):
 
 
 def nested_property(container, prop_str):
+    """ Create a nested property object to get/set values in a container. """
     # Only supports dot notation and [index] for arrays
     def parse_prop_str(prop_str):
         import re
@@ -244,7 +272,7 @@ def nested_property(container, prop_str):
 
     parts = parse_prop_str(prop_str)
 
-    def get():
+    def getVal():
         cur = container
         for part in parts:
             if isinstance(part, int):
@@ -259,9 +287,9 @@ def nested_property(container, prop_str):
                     return None
         return cur
 
-    def set(val):
+    def setVal(val):
         cur = container
-        for i, part in enumerate(parts[:-1]):
+        for part in parts[:-1]:
             if isinstance(part, int):
                 while len(cur) <= part:
                     cur.append({})
@@ -279,6 +307,6 @@ def nested_property(container, prop_str):
             cur[last] = val
     return type(
         'NestedProperty', (),
-        {'get': staticmethod(get),
-         'set': staticmethod(set),
+        {'getVal': staticmethod(getVal),
+         'setVal': staticmethod(setVal),
          'astr': prop_str, 'parts': parts, 'obj': container})()
