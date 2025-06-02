@@ -381,13 +381,13 @@ class PlotlyController:
         """
         Filters out specific keys from the provided keyword arguments.
         """
-        fig = kwargs.get("fig")
-        png = None
-        if not isinstance(fig, plotly.graph_objs.Figure):
-            real_fig = pio.from_json(json.dumps(fig), skip_invalid=True)
-            png = base64.b64encode(real_fig.to_image()).decode('ascii')
-        else:
-            png = base64.b64encode(fig.to_image()).decode('ascii')
+        # fig = kwargs.get("fig")
+        # png = None
+        # if not isinstance(fig, plotly.graph_objs.Figure):
+        #     real_fig = pio.from_json(json.dumps(fig), skip_invalid=True)
+        #     png = base64.b64encode(real_fig.to_image()).decode('ascii')
+        # else:
+        #     png = base64.b64encode(fig.to_image()).decode('ascii')
 
         return {
             **{k: v for k, v in kwargs.items() if k not in [
@@ -399,12 +399,12 @@ class PlotlyController:
                 'auth_token',
                 '__ac__key'
             ]},
-            "preview_image": {
-                "content-type": "image/png",
-                "encoding": "base64",
-                "filename": "preview.png",
-                "data": png
-            },
+            # "preview_image": {
+            #     "content-type": "image/png",
+            #     "encoding": "base64",
+            #     "filename": "preview.png",
+            #     "data": png
+            # },
             "topics": self.metadata.get("topics", []),
             "temporal_coverage": self.metadata.get(
                 "temporal_coverage", {"temporal": []}
