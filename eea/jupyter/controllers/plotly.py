@@ -170,7 +170,7 @@ class PlotlyController:
             [data_sources, _] = get_plotly_data_sources(
                 visualization["data"],
                 visualization["layout"],
-                visualization["dataSources"])
+                visualization.get("dataSources", {}))
 
             visualization["dataSources"] = data_sources
 
@@ -193,7 +193,7 @@ class PlotlyController:
             [data_sources, _] = get_plotly_data_sources(
                 visualization["data"],
                 visualization["layout"],
-                visualization["dataSources"])
+                visualization.get("dataSources", {}))
 
             visualization["dataSources"] = data_sources
 
