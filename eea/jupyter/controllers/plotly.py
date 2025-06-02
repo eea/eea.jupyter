@@ -170,7 +170,8 @@ class PlotlyController:
             [data_sources, _] = get_plotly_data_sources(
                 visualization["data"],
                 visualization["layout"],
-                visualization.get("dataSources", {}))
+                (visualization["dataSources"]
+                 if "dataSources" in visualization else {}))
 
             visualization["dataSources"] = data_sources
 
@@ -190,10 +191,12 @@ class PlotlyController:
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
 
-            [data_sources, _] = get_plotly_data_sources(
+            [
+                data_sources, _] = get_plotly_data_sources(
                 visualization["data"],
                 visualization["layout"],
-                visualization.get("dataSources", {}))
+                (visualization["dataSources"]
+                 if "dataSources" in visualization else {}))
 
             visualization["dataSources"] = data_sources
 
