@@ -20,6 +20,7 @@ class PlotlyController:
     auth_token = None
     resources = {}
     metadata = {}
+    extract_data_sources = True
 
     def __init__(self, **kwargs):
         """
@@ -41,6 +42,7 @@ class PlotlyController:
         temporal_coverage = kwargs.get("temporal_coverage", None)
         geo_coverage = kwargs.get("geo_coverage", None)
         data_provenance = kwargs.get("data_provenance", None)
+        self.extract_data_sources = kwargs.get("extract_data_sources", True)
 
         if url is not None and not isinstance(url, str):
             return "URL must be a string and cannot be empty"
@@ -167,13 +169,14 @@ class PlotlyController:
             metadata = self.get_metadata(**kwargs)
             metadata["@type"] = "visualization"
 
-            [data_sources, _] = get_plotly_data_sources(
-                visualization["data"],
-                visualization["layout"],
-                (visualization["dataSources"]
-                 if "dataSources" in visualization else {}))
+            if self.extract_data_sources:
+                [data_sources, _] = get_plotly_data_sources(
+                    visualization["data"],
+                    visualization["layout"],
+                    (visualization["dataSources"]
+                    if "dataSources" in visualization else {}))
 
-            visualization["dataSources"] = data_sources
+                visualization["dataSources"] = data_sources
 
             metadata["visualization"] = visualization
             if metadata.get("id", None) is None:
@@ -191,14 +194,15 @@ class PlotlyController:
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
 
-            [
-                data_sources, _] = get_plotly_data_sources(
-                visualization["data"],
-                visualization["layout"],
-                (visualization["dataSources"]
-                 if "dataSources" in visualization else {}))
+            if self.extract_data_sources:
+                [
+                    data_sources, _] = get_plotly_data_sources(
+                    visualization["data"],
+                    visualization["layout"],
+                    (visualization["dataSources"]
+                    if "dataSources" in visualization else {}))
 
-            visualization["dataSources"] = data_sources
+                visualization["dataSources"] = data_sources
 
             metadata["visualization"] = visualization
             response = session.patch(
@@ -400,6 +404,7 @@ class PlotlyController:
                 'chart_data',
                 'auth_provider',
                 'auth_token',
+                'extract_data_sources',
                 '__ac__key'
             ]},
             # "preview_image": {
