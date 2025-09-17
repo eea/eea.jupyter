@@ -274,7 +274,7 @@ class PlotlyController:
         if self.resources.get("topics") is None:
             response = self.session.get(
                 self.api_url +
-                "/@vocabularies/collective.taxonomy.eeatopicstaxonomy?b_size=1000")  # noqa: E501
+                "/@vocabularies/collective.taxonomy.eeatopicstaxonomy?b_size=1000")  # noqa: E501  # pylint: disable=line-too-long
             if response.status_code == 200:
                 self.resources["topics"] = response.json().get("items", [])
             else:
