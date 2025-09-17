@@ -174,7 +174,7 @@ class PlotlyController:
                     visualization["data"],
                     visualization["layout"],
                     (visualization["dataSources"]
-                    if "dataSources" in visualization else {}))
+                     if "dataSources" in visualization else {}))
 
                 visualization["dataSources"] = data_sources
 
@@ -200,7 +200,7 @@ class PlotlyController:
                     visualization["data"],
                     visualization["layout"],
                     (visualization["dataSources"]
-                    if "dataSources" in visualization else {}))
+                     if "dataSources" in visualization else {}))
 
                 visualization["dataSources"] = data_sources
 
@@ -285,13 +285,21 @@ class PlotlyController:
                     get_err_msg(response))
         topics_titles = [topic.get("title", "")
                          for topic in self.resources["topics"]]
-        for index, topic in enumerate(topics):
+        for topic in topics:
             if topic not in topics_titles:
                 return (
                     f"\"{topic}\" is not a valid topic. "
                     f"Allowed values are: {topics_titles}"
                 )
-            self.metadata["topics"].append(self.resources["topics"][index])
+            try:
+                topic_index = topics_titles.index(topic)
+                self.metadata["topics"].append(
+                    self.resources["topics"][topic_index])
+            except ValueError:
+                return (
+                    f"\"{topic}\" is not a valid topic. "
+                    f"Allowed values are: {topics_titles}"
+                )
         return None
 
     def __parse_temporal_coverage(self, temporal_coverage):
