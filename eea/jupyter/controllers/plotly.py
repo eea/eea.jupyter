@@ -2,12 +2,9 @@
 """
 from urllib.parse import urlparse
 from uuid import uuid4
-import base64
 import getpass
-import json
 import requests
 import plotly
-import plotly.io as pio
 
 from .data_sources import get_plotly_data_sources
 
