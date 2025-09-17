@@ -143,8 +143,7 @@ def get_column_names(src_array, data_source_options):
     for src in src_array:
         columns = [dso for dso in data_source_options if dso['value'] == src]
         if len(columns) == 1:
-            names.append(columns[0].get('columnName')
-                         or columns[0].get('label'))
+            names.append(columns[0].get('columnName') or columns[0].get('label'))  # noqa: E501
         else:
             names.append('')
     return ' - '.join(names)
