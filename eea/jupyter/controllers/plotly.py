@@ -2,12 +2,11 @@
 """
 from urllib.parse import urlparse
 from uuid import uuid4
-import base64
 import getpass
-import json
 import requests
 import plotly
-import plotly.io as pio
+
+from .data_sources import get_plotly_data_sources
 
 
 class PlotlyController:
@@ -18,6 +17,7 @@ class PlotlyController:
     auth_token = None
     resources = {}
     metadata = {}
+    extract_data_sources = True
 
     def __init__(self, **kwargs):
         """
@@ -39,6 +39,7 @@ class PlotlyController:
         temporal_coverage = kwargs.get("temporal_coverage", None)
         geo_coverage = kwargs.get("geo_coverage", None)
         data_provenance = kwargs.get("data_provenance", None)
+        self.extract_data_sources = kwargs.get("extract_data_sources", True)
 
         if url is not None and not isinstance(url, str):
             return "URL must be a string and cannot be empty"
@@ -164,7 +165,16 @@ class PlotlyController:
         if response.status_code == 404:
             metadata = self.get_metadata(**kwargs)
             metadata["@type"] = "visualization"
-            # metadata["visualization"] = get_visualization(chart_data)
+
+            if self.extract_data_sources:
+                [data_sources, _] = get_plotly_data_sources(
+                    visualization["data"],
+                    visualization["layout"],
+                    (visualization["dataSources"]
+                     if "dataSources" in visualization else {}))
+
+                visualization["dataSources"] = data_sources
+
             metadata["visualization"] = visualization
             if metadata.get("id", None) is None:
                 metadata["id"] = self.path_parts[-1]
@@ -180,7 +190,17 @@ class PlotlyController:
                     get_err_msg(response))
         elif response.status_code == 200:
             metadata = self.get_metadata(**kwargs)
-            # metadata["visualization"] = get_visualization(chart_data)
+
+            if self.extract_data_sources:
+                [
+                    data_sources, _] = get_plotly_data_sources(
+                    visualization["data"],
+                    visualization["layout"],
+                    (visualization["dataSources"]
+                     if "dataSources" in visualization else {}))
+
+                visualization["dataSources"] = data_sources
+
             metadata["visualization"] = visualization
             response = session.patch(
                 self.api_url + self.path,
@@ -254,7 +274,7 @@ class PlotlyController:
         if self.resources.get("topics") is None:
             response = self.session.get(
                 self.api_url +
-                "/@vocabularies/collective.taxonomy.eeatopicstaxonomy")
+                "/@vocabularies/collective.taxonomy.eeatopicstaxonomy?b_size=1000")  # noqa: E501  # pylint: disable=line-too-long
             if response.status_code == 200:
                 self.resources["topics"] = response.json().get("items", [])
             else:
@@ -262,13 +282,21 @@ class PlotlyController:
                     get_err_msg(response))
         topics_titles = [topic.get("title", "")
                          for topic in self.resources["topics"]]
-        for index, topic in enumerate(topics):
+        for topic in topics:
             if topic not in topics_titles:
                 return (
                     f"\"{topic}\" is not a valid topic. "
                     f"Allowed values are: {topics_titles}"
                 )
-            self.metadata["topics"].append(self.resources["topics"][index])
+            try:
+                topic_index = topics_titles.index(topic)
+                self.metadata["topics"].append(
+                    self.resources["topics"][topic_index])
+            except ValueError:
+                return (
+                    f"\"{topic}\" is not a valid topic. "
+                    f"Allowed values are: {topics_titles}"
+                )
         return None
 
     def __parse_temporal_coverage(self, temporal_coverage):
@@ -365,13 +393,13 @@ class PlotlyController:
         """
         Filters out specific keys from the provided keyword arguments.
         """
-        fig = kwargs.get("fig")
-        png = None
-        if not isinstance(fig, plotly.graph_objs.Figure):
-            real_fig = pio.from_json(json.dumps(fig), skip_invalid=True)
-            png = base64.b64encode(real_fig.to_image()).decode('ascii')
-        else:
-            png = base64.b64encode(fig.to_image()).decode('ascii')
+        # fig = kwargs.get("fig")
+        # png = None
+        # if not isinstance(fig, plotly.graph_objs.Figure):
+        #     real_fig = pio.from_json(json.dumps(fig), skip_invalid=True)
+        #     png = base64.b64encode(real_fig.to_image()).decode('ascii')
+        # else:
+        #     png = base64.b64encode(fig.to_image()).decode('ascii')
 
         return {
             **{k: v for k, v in kwargs.items() if k not in [
@@ -381,14 +409,15 @@ class PlotlyController:
                 'chart_data',
                 'auth_provider',
                 'auth_token',
+                'extract_data_sources',
                 '__ac__key'
             ]},
-            "preview_image": {
-                "content-type": "image/png",
-                "encoding": "base64",
-                "filename": "preview.png",
-                "data": png
-            },
+            # "preview_image": {
+            #     "content-type": "image/png",
+            #     "encoding": "base64",
+            #     "filename": "preview.png",
+            #     "data": png
+            # },
             "topics": self.metadata.get("topics", []),
             "temporal_coverage": self.metadata.get(
                 "temporal_coverage", {"temporal": []}
