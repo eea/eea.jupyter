@@ -73,12 +73,8 @@ def maybe_transpose_data(data, src_attribute_path, trace_type):
         return None
 
     is_transposable_2d = (
-        src_attribute_path.endswith('zsrc')
-        and
-        trace_type
-        in
-        ['contour', 'contourgl', 'heatmap', 'heatmapgl', 'surface', 'carpet',
-         'contourcarpet'])
+        src_attribute_path.endswith('zsrc') and
+        trace_type in ['contour', 'contourgl', 'heatmap', 'heatmapgl', 'surface', 'carpet', 'contourcarpet'])  # noqa: E501
     if is_transposable_2d:
         return transpose(data)
 
